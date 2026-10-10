@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قهرمانان کسر 🌈</title>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+  --pink:#ff5c9a;
+  --purple:#7656e8;
+  --blue:#38bdf8;
+  --yellow:#ffe66d;
+  --green:#28dba0;
+  --dark:#30245f;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Tahoma,Arial,sans-serif;
+  text-align:center;
+  color:var(--dark);
+  background:linear-gradient(135deg,#ffb8d2,#c5b8ff,#a7e8ff);
+  background-attachment:fixed;
+  transition:background .3s;
+}
+
+.container{
+  width:100%;
+  min-height:100vh;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+h1{
+  font-size:clamp(27px,5vw,48px);
+  color:#fff;
+  text-shadow:3px 4px 0 #9b53cf,0 5px 15px #6546a7;
+  margin:5px 0 20px;
+}
+
+.info{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.info-box{
+  background:#fff;
+  border:3px solid rgba(255,255,255,.8);
+  border-radius:18px;
+  padding:12px 18px;
+  font-weight:bold;
+  font-size:clamp(17px,2.5vw,24px);
+  box-shadow:0 5px 0 rgba(94,58,147,.15);
+}
+
+.card{
+  background:rgba(255,255,255,.96);
+  border:5px solid #fff;
+  border-radius:30px;
+  padding:25px 20px;
+  width:min(900px,100%);
+  box-shadow:0 12px 35px rgba(90,48,150,.2);
+}
+
+.question-title{
+  font-size:clamp(21px,3vw,32px);
+  line-height:1.8;
+  font-weight:bold;
+}
+
+.question{
+  font-size:clamp(42px,8vw,76px);
+  font-weight:bold;
+  margin:25px 0;
+  direction:ltr;
+  color:#6741d9;
+}
+
+.fraction{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  vertical-align:middle;
+  line-height:1.15;
+  margin:0 5px;
+}
+
+.fraction .top{
+  border-bottom:3px solid currentColor;
+  padding:0 10px 5px;
+}
+
+.fraction .bottom{
+  padding:5px 10px 0;
+}
+
+.choices{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:25px;
+}
+
+.choice{
+  border:3px solid transparent;
+  border-radius:22px;
+  padding:17px 8px;
+  min-height:95px;
+  font-family:inherit;
+  font-size:clamp(24px,4vw,36px);
+  font-weight:bold;
+  color:#35245e;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 0 rgba(61,40,113,.12);
+  transition:transform .15s,filter .15s;
+}
+
+.choice:nth-child(1){
+  background:#ffdf70;
+  border-color:#ffca38;
+}
+.choice:nth-child(2){
+  background:#ffb8d2;
+  border-color:#ff91bb;
+}
+.choice:nth-child(3){
+  background:#a9edda;
+  border-color:#70dabb;
+}
+.choice:nth-child(4){
+  background:#b8d9ff;
+  border-color:#8cbaff;
+}
+
+.choice:hover:not(:disabled){
+  transform:translateY(-4px) scale(1.02);
+  filter:saturate(1.2);
+}
+
+.choice:disabled{cursor:default}
+
+.choice.correct{
+  background:#36d99b!important;
+  border-color:#0ba96d!important;
+  color:#064b30;
+}
+
+.choice.wrong{
+  background:#ff7777!important;
+  border-color:#e23e55!important;
+  color:#710d24;
+}
+
+button.main-btn{
+  border:0;
+  border-radius:20px;
+  background:linear-gradient(135deg,#ffdc52,#ffad47);
+  color:#4d286e;
+  padding:17px 32px;
+  font-size:clamp(20px,3vw,28px);
+  font-family:inherit;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:22px;
+  box-shadow:0 7px 0 #e68d37;
+  transition:transform .15s;
+}
+
+button.main-btn:active{
+  transform:translateY(4px);
+  box-shadow:0 3px 0 #e68d37;
+}
+
+.feedback{
+  font-size:clamp(21px,3vw,31px);
+  font-weight:bold;
+  margin-top:20px;
+  min-height:42px;
+  line-height:1.8;
+}
+
+.result-emoji{
+  font-size:clamp(50px,9vw,90px);
+  margin:15px;
+}
+
+.result-text{
+  font-size:clamp(24px,4vw,39px);
+  line-height:1.9;
+  font-weight:bold;
+}
+
+.hidden{display:none!important}
+
+.shake{animation:shake .4s}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%,60%{transform:translateX(-8px)}
+  40%,80%{transform:translateX(8px)}
+}
+
+body.wrong-screen{
+  background:linear-gradient(135deg,#ff8a9a,#ffcccc,#ffa6b9);
+}
+
+body.correct-screen{
+  background:linear-gradient(135deg,#73e8bc,#a5f3d5,#fff0a5);
+}
+
+#confetti{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:10;
+}
+
+@media(max-width:500px){
+  .container{padding:10px}
+  .card{padding:18px 10px}
+  .choices{gap:10px}
+  .choice{min-height:78px;padding:10px 4px}
+  .info-box{padding:10px 12px}
+}
+</style>
+</head>
+
+<body>
+<canvas id="confetti"></canvas>
+
+<div class="container">
+  <h1>🌈🏆 قهرمانان کسر 🏆🌈</h1>
+
+  <div class="info">
+    <div class="info-box">⭐ امتیاز: <span id="score">۰</span></div>
+    <div class="info-box">⏱ زمان: <span id="time">۶۰</span> ثانیه</div>
+    <div class="info-box">📝 سؤال: <span id="number">۰ از ۱۰</span></div>
+  </div>
+
+  <div class="card" id="gameCard">
+
+    <div id="startScreen">
+      <div class="result-emoji">🎯🌟</div>
+      <div class="result-text">
+        آماده‌اید قهرمانان کسر؟<br>
+        🌟 ۱۰ سؤال هیجان‌انگیز<br>
+        ⏰ ۶۰ ثانیه فرصت<br>
+        🏅 هر پاسخ درست، ۱۰ امتیاز!
+      </div>
+      <button class="main-btn" onclick="startGame()">🚀 شروع مسابقه</button>
+    </div>
+
+    <div id="questionScreen" class="hidden">
+      <div class="question-title">
+        ✨ کسر زیر را به عدد مخلوط تبدیل کن ✨
+      </div>
+      <div class="question" id="question"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div id="endScreen" class="hidden">
+      <div class="result-emoji" id="endEmoji">🏆</div>
+      <div class="result-text" id="endText"></div>
+      <button class="main-btn" onclick="startGame()">🔄 مسابقه گروه بعدی</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let score=0;
+let seconds=60;
+let questionNumber=0;
+const totalQuestions=10;
+let correctAnswer=null;
+let active=false;
+let locked=false;
+let timer=null;
+let questionTimeout=null;
+const usedQuestions=new Set();
+
+function fa(num){
+  return String(num).replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
+}
+
+function fractionHTML(n,d){
+  return `<span class="fraction">
+    <span class="top">${fa(n)}</span>
+    <span class="bottom">${fa(d)}</span>
+  </span>`;
+}
+
+/* نمایش کسر بدون ساده‌کردن */
+function mixedHTML(value){
+  if(value.n===0){
+    return `<span dir="ltr">${fa(value.whole)}</span>`;
+  }
+
+  const whole=value.whole>0
+    ? `<span>${fa(value.whole)}</span>` : "";
+
+  return `<span style="display:inline-flex;direction:ltr;align-items:center;gap:8px">
+    ${whole}${fractionHTML(value.n,value.d)}
+  </span>`;
+}
+
+function plainMixed(a){
+  if(a.n===0) return fa(a.whole);
+  if(a.whole===0) return `${fa(a.n)}/${fa(a.d)}`;
+  return `${fa(a.whole)} و ${fa(a.n)}/${fa(a.d)}`;
+}
+
+function convertFraction(n,d){
+  const whole=Math.floor(n/d);
+  const remainder=n%d;
+
+  if(remainder===0){
+    return {whole:whole,n:0,d:1};
+  }
+
+  return {whole:whole,n:remainder,d:d};
+}
+
+function answerKey(a){
+  return `${a.whole}|${a.n}|${a.d}`;
+}
+
+function makeQuestion(){
+  let n,d,key;
+
+  do{
+    d=Math.floor(Math.random()*9)+2;
+    n=Math.floor(Math.random()*(d*8-d))+d+1;
+    key=`${n}/${d}`;
+  }while(usedQuestions.has(key));
+
+  usedQuestions.add(key);
+
+  return {n,d,answer:convertFraction(n,d)};
+}
+
+function makeWrongAnswers(correct){
+  const answers=[];
+  const seen=new Set([answerKey(correct)]);
+
+  while(answers.length<3){
+    let wrong;
+    const type=Math.floor(Math.random()*3);
+
+    if(type===0){
+      wrong={
+        whole:Math.max(0,correct.whole+(Math.random()<.5?-1:1)),
+        n:correct.n,
+        d:correct.d
+      };
+    }else if(type===1){
+      const denominator=Math.max(2,correct.d+(Math.random()<.5?-1:1));
+      const numerator=correct.n===0?1:Math.min(denominator-1,correct.n);
+      wrong={whole:correct.whole,n:numerator,d:denominator};
+    }else{
+      wrong={whole:correct.whole+1,n:correct.n,d:correct.d};
+    }
+
+    if(wrong.n>=wrong.d) wrong.n=wrong.d-1;
+    if(wrong.n===0) wrong.d=1;
+
+    const key=answerKey(wrong);
+    if(!seen.has(key)){
+      seen.add(key);
+      answers.push(wrong);
+    }
+  }
+
+  return answers;
+}
+
+function createChoices(correct){
+  const choices=[correct,...makeWrongAnswers(correct)];
+
+  for(let i=choices.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [choices[i],choices[j]]=[choices[j],choices[i]];
+  }
+
+  $("choices").innerHTML="";
+
+  choices.forEach(choice=>{
+    const button=document.createElement("button");
+    button.className="choice";
+    button.innerHTML=mixedHTML(choice);
+    button.dataset.answer=answerKey(choice);
+    button.onclick=()=>checkAnswer(button,choice);
+    $("choices").appendChild(button);
+  });
+}
+
+function startGame(){
+  clearInterval(timer);
+  clearTimeout(questionTimeout);
+
+  score=0;
+  seconds=60;
+  questionNumber=0;
+  active=true;
+  locked=false;
+  usedQuestions.clear();
+
+  document.body.classList.remove("wrong-screen","correct-screen");
+
+  $("score").textContent=fa(score);
+  $("time").textContent=fa(seconds);
+  $("number").textContent=`${fa(0)} از ${fa(totalQuestions)}`;
+
+  $("startScreen").classList.add("hidden");
+  $("endScreen").classList.add("hidden");
+  $("questionScreen").classList.remove("hidden");
+
+  nextQuestion();
+
+  timer=setInterval(()=>{
+    if(!active)return;
+    seconds--;
+    $("time").textContent=fa(seconds);
+    if(seconds<=0)endGame("time");
+  },1000);
+}
+
+function nextQuestion(){
+  if(!active)return;
+  if(questionNumber>=totalQuestions){
+    endGame("questions");
+    return;
+  }
+
+  locked=false;
+  document.body.classList.remove("wrong-screen","correct-screen");
+  $("gameCard").classList.remove("shake");
+  $("feedback").textContent="";
+
+  questionNumber++;
+  $("number").textContent=`${fa(questionNumber)} از ${fa(totalQuestions)}`;
+
+  const q=makeQuestion();
+  correctAnswer=q.answer;
+  $("question").innerHTML=fractionHTML(q.n,q.d);
+  createChoices(correctAnswer);
+}
+
+function checkAnswer(button,choice){
+  if(!active||locked)return;
+
+  locked=true;
+  document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+
+  const isCorrect=answerKey(choice)===answerKey(correctAnswer);
+
+  if(isCorrect){
+    score+=10;
+    $("score").textContent=fa(score);
+    button.classList.add("correct");
+    document.body.classList.add("correct-screen");
+    $("feedback").textContent="آفرین! پاسخ درست بود 🎉🌟";
+    celebrate();
+  }else{
+    button.classList.add("wrong");
+    document.body.classList.add("wrong-screen");
+    $("gameCard").classList.add("shake");
+
+    document.querySelectorAll(".choice").forEach(b=>{
+      if(b.dataset.answer===answerKey(correctAnswer)){
+        b.classList.add("correct");
+      }
+    });
+
+    $("feedback").innerHTML=`😢 پاسخ درست: ${plainMixed(correctAnswer)}`;
+  }
+
+  questionTimeout=setTimeout(()=>{
+    if(!active)return;
+    if(questionNumber>=totalQuestions)endGame("questions");
+    else nextQuestion();
+  },1600);
+}
+
+function endGame(reason){
+  if(!active)return;
+
+  active=false;
+  clearInterval(timer);
+  clearTimeout(questionTimeout);
+
+  $("questionScreen").classList.add("hidden");
+  $("endScreen").classList.remove("hidden");
+  document.body.classList.remove("wrong-screen","correct-screen");
+
+  $("endEmoji").textContent=score===100?"🏆🎉":score>=70?"🥳👏":score>=40?"😊💪":"🌟";
+
+  let message=reason==="time"
+    ?"⏰ زمان مسابقه تمام شد!<br>"
+    :"🎯 هر ۱۰ سؤال را پاسخ دادی!<br>";
+
+  message+=`امتیاز نهایی: ${fa(score)} از ${fa(100)}<br>`;
+
+  if(score===100)message+="فوق‌العاده بود! قهرمان کسرها شدی! 🏆";
+  else if(score>=70)message+="آفرین! عالی بودی! 👏";
+  else if(score>=40)message+="خوب بود! با تمرین بهتر هم می‌شی! 💪";
+  else message+="اشکالی نداره؛ دوباره تلاش کن! 🌱";
+
+  $("endText").innerHTML=message;
+}
+
+const canvas=$("confetti");
+const ctx=canvas.getContext("2d");
+let particles=[];
+let confettiAnimation=null;
+
+function resizeCanvas(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resizeCanvas);
+resizeCanvas();
+
+function celebrate(){
+  particles=[];
+
+  for(let i=0;i<120;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:-Math.random()*canvas.height,
+      size:Math.random()*8+4,
+      speed:Math.random()*4+2,
+      drift:Math.random()*4-2,
+      color:["#ff5c9a","#ffe66d","#28dba0","#38bdf8","#a78bfa"]
+        [Math.floor(Math.random()*5)]
+    });
+  }
+
+  cancelAnimationFrame(confettiAnimation);
+  drawConfetti();
+}
+
+function drawConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p=>{
+    ctx.fillStyle=p.color;
+    ctx.fillRect(p.x,p.y,p.size,p.size);
+    p.y+=p.speed;
+    p.x+=p.drift;
+  });
+
+  particles=particles.filter(p=>p.y<canvas.height);
+
+  if(particles.length){
+    confettiAnimation=requestAnimationFrame(drawConfetti);
+  }else{
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+}
+</script>
+</body>
+</html>
